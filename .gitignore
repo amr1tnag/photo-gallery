@@ -1,0 +1,11 @@
+# Vercel project link (local only)
+.vercel
+
+# local editor / preview settings
+.claude
+
+# OS clutter
+Thumbs.db
+.DS_Store
+desktop.ini
+__pycache__/

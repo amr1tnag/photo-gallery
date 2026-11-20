@@ -1,0 +1,532 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Amrit — Photographs</title>
+<meta name="description" content="Quiet Frames — a personal archive of photographs and films by Amrit: people, rituals and light from Mumbai and beyond.">
+<!-- link previews (LinkedIn, WhatsApp, X…) -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://photo-gallery-three-sage.vercel.app/">
+<meta property="og:title" content="Quiet Frames — Amrit, Photographs & Films">
+<meta property="og:description" content="A personal archive of people, rituals and light — 34 photographs and 4 films.">
+<meta property="og:image" content="https://photo-gallery-three-sage.vercel.app/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="627">
+<meta property="og:image:alt" content="Quiet Frames — a strip of black-and-white photographs under a large headline">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://photo-gallery-three-sage.vercel.app/og.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<script src="img/meta.js"></script>
+<style>
+  :root{
+    --bg:#f4f3ef; --ink:#111; --mute:#8a8984; --line:#dddcd6;
+    --pad:clamp(16px,2.4vw,32px); --gap:clamp(10px,1.4vw,20px);
+    --hh:44px;                       /* header height: the filter bar sticks right under it */
+    --ease:cubic-bezier(.2,.7,0,1);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;scrollbar-gutter:stable}
+  body{background:var(--bg);color:var(--ink);font:500 14px/1.45 "Inter Tight",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  .mono{font:400 11px/1.4 "JetBrains Mono",ui-monospace,monospace;text-transform:uppercase;letter-spacing:.02em}
+  .mute{color:var(--mute)}
+  .grid{display:grid;grid-template-columns:repeat(12,1fr);column-gap:var(--gap);padding-left:var(--pad);padding-right:var(--pad)}
+  [hidden]{display:none!important}
+  :focus-visible{outline:1px solid var(--ink);outline-offset:4px}
+
+  /* header */
+  header{position:sticky;top:0;z-index:20;height:var(--hh);align-items:center;background:var(--bg);color:var(--ink);transition:background-color .45s ease,color .45s ease}
+  header .mute{transition:color .45s ease}
+  /* at the very top of the page the header is black; it turns light once you scroll */
+  header.dark{background:#0c0c0b;color:#f4f3ef}
+  header.dark .mute{color:#9a988f}
+  header.dark :focus-visible{outline-color:#f4f3ef}
+  .top-sentinel{position:absolute;top:0;left:0;width:1px;height:24px;pointer-events:none}
+  header>*:nth-child(1){grid-column:1/4}
+  header>*:nth-child(2){grid-column:4/7}
+  header nav{grid-column:7/11;display:flex;gap:18px}
+  header>*:nth-child(4){grid-column:11/13;text-align:right;font-variant-numeric:tabular-nums}
+  .ul{position:relative}
+  .ul::after{content:"";position:absolute;left:0;right:0;bottom:-2px;height:1px;background:currentColor;transform:scaleX(0);transform-origin:right;transition:transform .45s var(--ease)}
+  .ul:hover::after{transform:scaleX(1);transform-origin:left}
+
+  /* hero */
+  .hero{padding-top:14vh;padding-bottom:10vh}
+  .hero h1{grid-column:1/13;font-weight:600;font-size:clamp(64px,15.5vw,260px);line-height:.84;letter-spacing:-.055em;text-transform:uppercase}
+  .hero h1 span{display:block;overflow:hidden;padding-bottom:.02em}
+  .hero h1 i{display:block;font-style:normal;transform:translateY(105%)}
+  .ready .hero h1 i{transform:none;transition:transform 1s var(--ease)}
+  .ready .hero h1 span:nth-child(2) i{transition-delay:.08s}
+  .intro{margin-top:7vh;row-gap:20px;padding:0;grid-column:1/13}
+  .intro>*{opacity:0;transform:translateY(14px)}
+  .ready .intro>*{opacity:1;transform:none;transition:opacity .8s ease .35s,transform .9s var(--ease) .35s}
+  .ready .intro>:nth-child(2){transition-delay:.42s}
+  .ready .intro>:nth-child(3){transition-delay:.5s}
+  .intro>:nth-child(1){grid-column:1/4}
+  .intro>:nth-child(2){grid-column:4/9;font-size:clamp(17px,1.5vw,22px);line-height:1.3;letter-spacing:-.01em;max-width:34ch}
+  .intro>:nth-child(3){grid-column:9/13;text-align:right}
+
+  /* filter */
+  .filter{border-top:1px solid var(--line);border-bottom:1px solid transparent;padding-top:14px;padding-bottom:14px;position:sticky;top:var(--hh);z-index:15;background:var(--bg);transition:border-color .3s}
+  .filter.stuck{border-bottom-color:var(--line)}
+  .filter>span:first-child{grid-column:1/4;white-space:nowrap}
+  .filter ul{grid-column:4/13;list-style:none;display:flex;flex-wrap:wrap;gap:6px 22px;position:relative}
+  .filter button{all:unset;cursor:pointer;color:var(--mute);transition:color .25s}
+  .filter button:hover,.filter button[aria-pressed=true]{color:var(--ink)}
+  .filter button:focus-visible{outline:1px solid var(--ink);outline-offset:3px}
+  .filter button sup{font-size:9px;margin-left:2px}
+  .filter .bar{position:absolute;left:0;top:0;height:1px;background:var(--ink);pointer-events:none;transition:transform .5s var(--ease),width .5s var(--ease)}
+
+  /* series */
+  main{transition:opacity .35s ease;scroll-margin-top:calc(var(--hh) + 46px)}
+  main.swap{opacity:0}
+  .series{padding-top:12vh}
+  .series-head{align-items:end;margin-bottom:5vh}
+  .series-head .idx{grid-column:1/4}
+  .series-head h2{grid-column:4/11;font-weight:600;font-size:clamp(38px,6vw,96px);line-height:.9;letter-spacing:-.045em;text-transform:uppercase;overflow:hidden;padding-bottom:.04em}
+  .series-head h2 i{display:block;font-style:normal;transform:translateY(105%);transition:transform 1s var(--ease)}
+  .series-head p,.series-head .mono{opacity:0;transition:opacity .9s ease .25s}
+  .series-head.in h2 i{transform:none}
+  .series-head.in p,.series-head.in .mono{opacity:1}
+  .series-head p{grid-column:4/10;margin-top:18px;max-width:42ch;color:#444}
+  .series-head .yr{grid-column:11/13;text-align:right;align-self:start}
+  .photos{row-gap:clamp(40px,8vh,110px);align-items:start}
+
+  /* photo: curtain reveal + settle, blurred placeholder until loaded */
+  figure{cursor:none;outline-offset:6px}
+  figure .frame{position:relative;overflow:hidden;background:#e6e5df;clip-path:inset(100% 0 0 0);transition:clip-path 1.1s var(--ease);transition-delay:var(--d,0s)}
+  figure .frame::before{content:"";position:absolute;inset:0;background:var(--q) center/cover;filter:blur(18px);transform:scale(1.2)}
+  figure img{position:relative;display:block;width:100%;height:auto;opacity:0;transform:scale(1.12);transition:opacity .7s ease,transform 1.6s var(--ease);transition-delay:0s,var(--d,0s)}
+  figure img.ok{opacity:1}
+  figure.in .frame{clip-path:inset(0 0 0 0)}
+  figure.in img{transform:scale(1)}
+  figure.in.settled img{transition:opacity .7s ease,transform 1.2s var(--ease)}
+  figure.in.settled:hover img{transform:scale(1.03)}
+  @media (pointer:coarse){figure{cursor:zoom-in}}
+
+  /* motion: 16:9 cover + silent loop that plays only while on screen */
+  .reel .frame{aspect-ratio:16/9}
+  .reel .frame img{height:100%;object-fit:cover}
+  .reel video.loop{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .8s ease}
+  .reel video.loop.on{opacity:1}
+  .series[data-id=motion]{scroll-margin-top:calc(var(--hh) + 46px)}
+
+  /* film player */
+  .vb{position:fixed;inset:0;z-index:55;background:#0c0c0b;color:#eceae4;display:grid;grid-template-rows:auto 1fr;opacity:0;visibility:hidden;transition:opacity .45s ease,visibility 0s .45s}
+  .vb.open{opacity:1;visibility:visible;transition:opacity .45s ease}
+  .vb-top{display:flex;justify-content:space-between;padding:14px var(--pad)}
+  .vb-top .mute{color:#8d8b85}
+  .vb button{all:unset;cursor:pointer}
+  .vb-stage{display:flex;align-items:center;justify-content:center;padding:0 var(--pad) var(--pad);min-height:0}
+  .vb video{max-width:100%;max-height:100%;background:#000;transform:scale(.985);transition:transform .7s var(--ease)}
+  .vb.open video{transform:none}
+
+  /* cursor label */
+  .cursor{position:fixed;left:0;top:0;z-index:40;pointer-events:none;padding:5px 9px;border-radius:99px;background:var(--bg);color:var(--ink);box-shadow:0 0 0 1px rgba(0,0,0,.06);opacity:0;scale:.6;transform:translate(-50%,-50%);transition:opacity .25s ease,scale .35s var(--ease);will-change:transform}
+  .cursor.on{opacity:1;scale:1}
+  @media (pointer:coarse){.cursor{display:none}}
+
+  /* footer */
+  footer.grid{margin-top:22vh;border-top:1px solid var(--line);padding-top:6vh;padding-bottom:18px}
+  footer .big{grid-column:4/13;font-weight:600;font-size:clamp(44px,8vw,132px);line-height:.88;letter-spacing:-.05em;text-transform:uppercase}
+  footer .big a{display:block;width:fit-content;transition:opacity .35s ease,transform .6s var(--ease)}
+  footer .big:hover a{opacity:.25}
+  footer .big a:hover{opacity:1;transform:translateX(.12em)}
+  footer .lab{grid-column:1/4}
+  footer .bottom{grid-column:1/13;display:flex;justify-content:space-between;margin-top:14vh}
+
+  /* lightbox */
+  .lb{position:fixed;inset:0;z-index:50;background:var(--bg);display:grid;grid-template-rows:auto 1fr auto;opacity:0;visibility:hidden;transition:opacity .45s ease,visibility 0s .45s}
+  .lb.open{opacity:1;visibility:visible;transition:opacity .45s ease}
+  .lb-top,.lb-bot{display:flex;justify-content:space-between;padding:14px var(--pad)}
+  .lb-stage{display:flex;align-items:center;justify-content:center;padding:0 var(--pad);min-height:0;position:relative;overflow:hidden}
+  .lb-stage img{max-width:100%;max-height:100%;object-fit:contain;opacity:0;transform:scale(.985);transition:opacity .4s ease,transform .7s var(--ease)}
+  .lb-stage img.ok{opacity:1;transform:none}
+  .lb-stage .nav{position:absolute;top:0;bottom:0;width:50%;cursor:w-resize}
+  .lb-stage .nav.next{right:0;cursor:e-resize}
+  .lb button{all:unset;cursor:pointer}
+  .lb-num{font-variant-numeric:tabular-nums}
+
+  @media (max-width:760px){
+    header nav,header>*:nth-child(2){display:none}
+    header>*:nth-child(1){grid-column:1/8} header>*:nth-child(4){grid-column:8/13}
+    .intro>*{grid-column:1/13 !important;text-align:left !important}
+    .filter>span:first-child{display:none} .filter ul{grid-column:1/13;gap:6px 16px}
+    .series-head>*{grid-column:1/13 !important;text-align:left !important}
+    .series-head .yr{order:-1;margin-bottom:8px}
+    .photos{row-gap:var(--gap)}
+    .photos figure{grid-column:1/13 !important}
+    .photos figure.half{grid-column:span 6 !important}
+    footer .big,footer .lab{grid-column:1/13} footer .lab{margin-bottom:18px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    *,*::before{transition-duration:.01s!important;transition-delay:0s!important}
+    .hero h1 i,.intro>*,.series-head h2 i,figure img{transform:none!important}
+    .intro>*,.series-head p,.series-head .mono{opacity:1!important}
+    figure .frame{clip-path:none!important}
+  }
+</style>
+</head>
+<body>
+
+<div class="top-sentinel" id="topSentinel"></div>
+<header class="grid mono dark" id="siteHeader">
+  <a href="#top">Amrit — Photographs</a>
+  <a class="mute ul" href="mailto:amritnag2005@gmail.com" style="width:fit-content">amritnag2005@gmail.com</a>
+  <nav><a class="ul" href="#gallery">Work</a><a class="ul" href="#motion">Motion</a><a class="ul" href="#about">About</a><a class="ul" href="#contact">Contact</a></nav>
+  <span id="clock">&nbsp;</span>
+</header>
+
+<section class="hero grid" id="top">
+  <h1><span><i>Quiet</i></span><span><i>Frames</i></span></h1>
+  <div class="intro grid" id="about">
+    <span class="mono mute">[ About ]</span>
+    <p>A personal archive of people, rituals and light — made between assignments, mostly on the streets of Mumbai and Kolkata.</p>
+    <span class="mono mute">Index — <span id="count"></span> photographs, <span id="fcount"></span> films<br>2024 — 2026</span>
+  </div>
+</section>
+
+<div class="filter grid mono" id="work">
+  <span class="mute">[ Series ]</span>
+  <ul id="filters"><span class="bar" id="bar"></span></ul>
+</div>
+
+<main id="gallery"></main>
+
+<footer class="grid" id="contact">
+  <div class="lab mono">
+    <span class="mute">[ Reach out ]</span><br><br>
+    <a class="ul" href="mailto:amritnag2005@gmail.com">amritnag2005@gmail.com</a><br>
+    <a class="ul" href="https://instagram.com/amr1tnag" target="_blank" rel="noopener">@amr1tnag</a><br>
+    <span class="mute">Mumbai, IN</span>
+  </div>
+  <div class="big">
+    <a href="mailto:amritnag2005@gmail.com">Email</a>
+    <a href="https://instagram.com/amr1tnag" target="_blank" rel="noopener">Instagram</a>
+  </div>
+  <div class="bottom mono mute"><span>Amrit ’26</span><span>All rights reserved</span></div>
+</footer>
+
+<div class="cursor mono" id="cursor">View</div>
+
+<div class="vb" id="vb" role="dialog" aria-modal="true" aria-label="Film player" aria-hidden="true">
+  <div class="vb-top mono"><span><span id="vbTitle"></span> <span class="mute" id="vbMeta"></span></span><button id="vbClose">Close [ esc ]</button></div>
+  <div class="vb-stage"><video id="vbVideo" controls playsinline preload="none"></video></div>
+</div>
+
+<div class="lb" id="lb"role="dialog" aria-modal="true" aria-label="Photo viewer" aria-hidden="true">
+  <div class="lb-top mono"><span id="lbTitle"></span><button id="lbClose">Close [ esc ]</button></div>
+  <div class="lb-stage" id="lbStage"><img id="lbImg" alt=""><span class="nav prev" id="lbPrev"></span><span class="nav next" id="lbNext"></span></div>
+  <div class="lb-bot mono mute"><span id="lbSeries"></span><span class="lb-num" id="lbNum"></span></div>
+</div>
+
+<script>
+// ---- Edit your series & photos here --------------------------------------
+// Each photo: [file number, title, [column start, column span]] on a 12-column grid.
+const SERIES = [
+  { id:"mother", title:"Making of a Mother", year:"Kumartuli · 2025",
+    text:"Weeks before Durga Puja, the artisans of Kumartuli shape clay into goddesses. Hands, eyes, smoke and patience.",
+    photos:[
+      ["01","Unveiled",[1,4]],["08","Third Eye",[6,7]],["07","The Pandal",[1,8]],
+      ["22","Ornament",[9,4]],["24","Dressing",[2,4]],["25","Between Light",[7,4]],
+      ["19","Many Hands",[1,6]],["20","The Lion",[8,5]],["21","Colour Returns",[3,4]],
+      ["17","Gold Thread",[8,4]],["18","Final Touches",[1,7]],["23","Watcher",[9,4]] ]},
+  { id:"flamingo", title:"Visitors", year:"Sewri Mudflats · 2025",
+    text:"Every winter the flamingos return to the city's edge, feeding in the shadow of cranes and smog.",
+    photos:[
+      ["12","Formation",[4,6]],["10","Wading",[1,4]],["11","Pink in Grey",[9,4]],
+      ["13","Skyline",[1,7]],["14","Lift Off",[6,7]] ]},
+  { id:"street", title:"Strangers", year:"Streets · 2024—26",
+    text:"Brief encounters — a look, a pause, a cat on a stack of tyres.",
+    photos:[
+      ["03","Roll Noodle Soup",[1,5]],["04","Wall",[7,6]],["05","Summit",[3,4]],
+      ["15","Keeper",[9,4]],["16","Book Street",[1,7]],["30","Passage",[9,3]],
+      ["28","Reflection",[2,5]],["09","Fast & Up",[8,5]],["06","Surface",[4,6]] ]},
+  { id:"stage", title:"After Dark", year:"Live · 2025",
+    text:"Concert floors and green rooms — noise turned into shape.",
+    photos:[
+      ["26","Embrace",[1,8]],["32","Encore",[9,4]],["27","Front Row",[3,7]],["33","Solo",[6,7]] ]},
+  { id:"sport", title:"Match Day", year:"DY Patil · 2025",
+    text:"Pitch-side at the T20 — the ritual before and the release during.",
+    photos:[
+      ["02","Stance",[1,4]],["29","The Drive",[6,7]],["31","Squad",[1,8]],["34","Toss",[5,8]] ]},
+];
+// ---- Video edits -----------------------------------------------------------
+// Files live in /video: <file>.mp4 (full edit), <file>-loop.mp4 (6s silent loop), <file>.webp (cover).
+const MOTION = { title:"Motion", year:"Photo Circle RAIT · 2026",
+  text:"Edits from the fest season — aftermovies and hype reels, cut to the beat of the night.",
+  films:[
+    ["twelve-years","12 Years of Memories","0:23",[1,9]],
+    ["hype-reel-01","Hype Reel 01","0:32",[1,6]],
+    ["hype-reel-02","Hype Reel 02","0:19",[7,6]],
+    ["pcr-aftermovie","PCR Aftermovie","1:00",[4,9]] ]};
+const POSTER_Q = {"twelve-years":"data:image/webp;base64,UklGRqQAAABXRUJQVlA4IJgAAADwAwCdASoYAA4APu1iqU2ppaOiMAgBMB2JZAC06CEl2IrgvYbVUsAAAP7ypCL16irnKpFU5yKSCvakFtzUZ72xie7BDbFw1hpqxTcdArzP4bpO2CfG3EWVjEu1nZipuxwf3ZBWF/GiNoKH6U81rhAkc8zh8NJyDGaOsXI7JiHdyc3C4gMdzu5egyFOMdJ6dKHCdHlAfwAAAA==","hype-reel-01":"data:image/webp;base64,UklGRoQAAABXRUJQVlA4IHgAAAAQBACdASoYAA4APu1iqk2ppaQiMAgBMB2JbACdMoR3ACnHNE9mrTqdQAD+8p+8siTbfkZQneezpKCHP1lVFXoE4ErJp3GlXcOt8oiuOB7jMHNREQHpWgwpXmzjfT9xF33mb9mpNzw9ynC+3ypsMrwn/dsAbBZgAAA=","hype-reel-02":"data:image/webp;base64,UklGRnAAAABXRUJQVlA4IGQAAADQAwCdASoYAA4APu1iqU2ppaOiMAgBMB2JYgDE2GlgArIPInKvwAAA/v5t+021ytY0ytBUP8NMAl1bdNT1ECqEODwsWAN9eLA/eFl6ayj5NQHM9pkwCsHRfkOJ6Wg9gKdDgAAA","pcr-aftermovie":"data:image/webp;base64,UklGRpAAAABXRUJQVlA4IIQAAADwAwCdASoYAA4APu1iqU2ppaOiMAgBMB2JaQAATBGjVOsnI5CxLgkAAP7sPFagiyNGOzGcdbf9O1o9lQNC13hmXeX2ymEPtemMpp4c06mcIOCYRxdWbl9bcP9CTRkV8Nk8TaTonVLVKKoP3ctTYU1glzZaLmsyZ/eT9H6WoZ/ny1YkAAA="};
+// ---------------------------------------------------------------------------
+
+const META = window.PHOTO_META || {};
+const $ = id => document.getElementById(id);
+const pad = n => String(n).padStart(2,"0");
+const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+// start the intro as soon as the fonts are in (never wait more than 500ms)
+Promise.race([document.fonts.ready, new Promise(r=>setTimeout(r,500))])
+  .then(()=>requestAnimationFrame(()=>document.documentElement.classList.add("ready")));
+
+// responsive sources: 640 / 1200 / 1800 wide WebP (generated next to each jpg)
+function srcset(file){
+  const w = META[file]?.w || 1800, seen = new Set();
+  return [640,1200,1800].map(s=>{
+    const real = Math.min(s,w); if (seen.has(real)) return null; seen.add(real);
+    return `img/${file}-${s}.webp ${real}w`;
+  }).filter(Boolean).join(", ");
+}
+const big = file => `img/${file}-1800.webp`;
+
+const flat = [];
+const gallery = $("gallery"), filters = $("filters"), bar = $("bar");
+
+const addFilter = (id,label,n) => {
+  const li = document.createElement("li");
+  li.innerHTML = `<button data-f="${id}" aria-pressed="${id==="all"}">${label}<sup>${n}</sup></button>`;
+  filters.appendChild(li);
+};
+addFilter("all","Everything",SERIES.reduce((a,s)=>a+s.photos.length,0));
+
+SERIES.forEach((s,si)=>{
+  addFilter(s.id,s.title,s.photos.length);
+  const sec = document.createElement("section");
+  sec.className = "series"; sec.dataset.id = s.id;
+  sec.innerHTML = `
+    <div class="series-head grid">
+      <span class="idx mono mute">( ${pad(si+1)} )</span>
+      <h2><i>${s.title}</i></h2>
+      <span class="yr mono mute">${s.year}</span>
+      <p>${s.text}</p>
+    </div>
+    <div class="photos grid"></div>`;
+  const grid = sec.querySelector(".photos");
+  s.photos.forEach(([file,title,[c,span]])=>{
+    const i = flat.length, m = META[file] || {w:1200,h:900};
+    flat.push({file,title,series:s.title});
+    const f = document.createElement("figure");
+    f.style.gridColumn = `${c} / span ${span}`;
+    f.tabIndex = 0; f.setAttribute("role","button"); f.setAttribute("aria-label",`Open ${title}`);
+    if (span<=4) f.classList.add("half");
+    const sizes = `(max-width:760px) ${span<=4?50:100}vw, ${Math.round(span/12*100)}vw`;
+    f.innerHTML = `<div class="frame" style="--q:url(${m.q||""})"><img
+      src="img/${file}-1200.webp" srcset="${srcset(file)}" sizes="${sizes}"
+      width="${m.w}" height="${m.h}" alt="${title}" loading="lazy" decoding="async"></div>`;
+    const img = f.querySelector("img");
+    const done = () => img.classList.add("ok");
+    img.complete && img.naturalWidth ? done() : (img.onload = done, img.onerror = done);
+    f.onclick = () => openLB(i);
+    f.onkeydown = e => { if (e.key==="Enter"||e.key===" ") { e.preventDefault(); openLB(i); } };
+    grid.appendChild(f);
+  });
+  gallery.appendChild(sec);
+});
+// ---- motion section -------------------------------------------------------
+addFilter("motion", MOTION.title, MOTION.films.length);
+{
+  const sec = document.createElement("section");
+  sec.className = "series"; sec.dataset.id = "motion"; sec.id = "motion";
+  sec.innerHTML = `
+    <div class="series-head grid">
+      <span class="idx mono mute">( ${pad(SERIES.length+1)} )</span>
+      <h2><i>${MOTION.title}</i></h2>
+      <span class="yr mono mute">${MOTION.year}</span>
+      <p>${MOTION.text}</p>
+    </div>
+    <div class="photos reels grid"></div>`;
+  const grid = sec.querySelector(".reels");
+  MOTION.films.forEach(([file,title,dur,[c,span]])=>{
+    const f = document.createElement("figure");
+    f.className = "reel"; f.style.gridColumn = `${c} / span ${span}`;
+    f.dataset.cursor = `Play ${dur}`;
+    f.tabIndex = 0; f.setAttribute("role","button"); f.setAttribute("aria-label",`Play ${title}`);
+    f.innerHTML = `<div class="frame" style="--q:url(${POSTER_Q[file]||""})">
+      <img src="video/${file}.webp" width="1600" height="900" alt="${title}" loading="lazy" decoding="async">
+      <video class="loop" muted loop playsinline preload="none" data-src="video/${file}-loop.mp4" aria-hidden="true"></video></div>`;
+    const img = f.querySelector("img");
+    const done = () => img.classList.add("ok");
+    img.complete && img.naturalWidth ? done() : (img.onload = done, img.onerror = done);
+    const v = f.querySelector("video");
+    v.addEventListener("playing", ()=>v.classList.add("on"));
+    f.onclick = () => openFilm(file,title,dur);
+    f.onkeydown = e => { if (e.key==="Enter"||e.key===" ") { e.preventDefault(); openFilm(file,title,dur); } };
+    grid.appendChild(f);
+  });
+  gallery.appendChild(sec);
+}
+// loops play only while on screen (skipped for reduced motion / data saver)
+const quiet = reduced || navigator.connection?.saveData;
+const loopIO = new IntersectionObserver(es=>es.forEach(en=>{
+  const v = en.target.querySelector("video.loop");
+  if (en.isIntersecting && !document.querySelector(".vb.open")) {
+    if (!v.src) v.src = v.dataset.src;
+    v.play().catch(()=>{});
+  } else v.pause();
+}),{threshold:.25});
+const rearmLoops = () => document.querySelectorAll(".reel").forEach(f=>{ loopIO.unobserve(f); loopIO.observe(f); });
+if (!quiet) {
+  document.querySelectorAll(".reel").forEach(f=>loopIO.observe(f));
+  // browsers pause muted video in hidden tabs; resume the visible ones on return
+  document.addEventListener("visibilitychange",()=>{
+    if (document.hidden) document.querySelectorAll("video.loop").forEach(v=>v.pause());
+    else rearmLoops();
+  });
+}
+
+$("count").textContent = flat.length;
+$("fcount").textContent = MOTION.films.length;
+
+// ---- reveal on scroll (photos that enter together get a small stagger) ----
+const io = new IntersectionObserver(entries=>{
+  let k = 0;
+  entries.forEach(en=>{
+    if (!en.isIntersecting) return;
+    const el = en.target; io.unobserve(el);
+    if (el.tagName==="FIGURE"){
+      el.style.setProperty("--d", (reduced ? 0 : Math.min(k++,3)*0.09)+"s");
+      setTimeout(()=>el.classList.add("settled"), 1800);
+    }
+    el.classList.add("in");
+  });
+},{rootMargin:"0px 0px -6% 0px"});
+document.querySelectorAll("figure,.series-head").forEach(el=>io.observe(el));
+
+// ---- filter: sliding underline + crossfade --------------------------------
+function moveBar(b){
+  const r = b.getBoundingClientRect(), u = filters.getBoundingClientRect();
+  bar.style.width = r.width+"px";
+  bar.style.transform = `translate(${r.left-u.left}px, ${r.bottom-u.top+3}px)`;
+}
+const active = () => filters.querySelector("[aria-pressed=true]");
+filters.addEventListener("click",e=>{
+  const b = e.target.closest("button"); if (!b || b===active()) return;
+  filters.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b));
+  moveBar(b);
+  gallery.classList.add("swap");
+  setTimeout(()=>{
+    document.querySelectorAll(".series").forEach(sec=>{
+      sec.hidden = !(b.dataset.f==="all" || sec.dataset.id===b.dataset.f);
+    });
+    const y = gallery.getBoundingClientRect().top + scrollY - $("work").offsetHeight - parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--hh"));
+    scrollTo({top:y, behavior:"instant"});
+    gallery.classList.remove("swap");
+  }, reduced ? 0 : 350);
+});
+const placeBar = () => moveBar(active());
+document.fonts.ready.then(placeBar); addEventListener("resize",placeBar); placeBar();
+
+// filter bar gets a bottom rule once it sticks
+const sentinel = document.createElement("div");
+$("work").before(sentinel);
+new IntersectionObserver(([en])=>$("work").classList.toggle("stuck", !en.isIntersecting && en.boundingClientRect.top < 60),
+  {rootMargin:"-44px 0px 0px 0px"}).observe(sentinel);
+
+// ---- header: black at the top, light once the page is scrolled -------------
+new IntersectionObserver(([en])=>$("siteHeader").classList.toggle("dark", en.isIntersecting))
+  .observe($("topSentinel"));
+
+// ---- clock ----------------------------------------------------------------
+const clock = $("clock");
+const tick = () => clock.textContent = new Date().toLocaleTimeString("en-US",{timeZone:"Asia/Kolkata",hour:"2-digit",minute:"2-digit"}) + " IST";
+tick(); setInterval(tick,10000);
+
+// ---- cursor label (desktop only; the loop sleeps when idle) ---------------
+const cur = $("cursor");
+if (matchMedia("(pointer:fine)").matches && !reduced){
+  let x=0,y=0,cx=0,cy=0,raf=0;
+  const loop = () => {
+    cx += (x-cx)*.22; cy += (y-cy)*.22;
+    cur.style.transform = `translate(${cx}px,${cy}px) translate(-50%,-50%)`;
+    raf = (Math.abs(x-cx)+Math.abs(y-cy) > .3) ? requestAnimationFrame(loop) : 0;
+  };
+  addEventListener("pointermove",e=>{
+    x=e.clientX; y=e.clientY;
+    const fig = e.target.closest?.("main figure"), on = !!fig;
+    if (on) cur.textContent = fig.dataset.cursor || "View";
+    if (on && !cur.classList.contains("on")) { cx=x; cy=y; }
+    cur.classList.toggle("on", on);
+    if (!raf) raf = requestAnimationFrame(loop);
+  },{passive:true});
+  document.addEventListener("pointerleave",()=>cur.classList.remove("on"));
+} else {
+  document.querySelectorAll("main figure").forEach(f=>f.style.cursor="zoom-in");
+}
+
+// ---- lightbox -------------------------------------------------------------
+const lb = $("lb"), lbImg = $("lbImg");
+let at = 0, token = 0, lastFocus = null;
+const preload = i => { const p = flat[(i+flat.length)%flat.length]; (new Image()).src = big(p.file); };
+function show(i){
+  at = (i+flat.length)%flat.length; const p = flat[at], t = ++token;
+  lbImg.classList.remove("ok");
+  const im = new Image();
+  im.onload = im.onerror = () => {
+    if (t!==token) return;                 // a newer photo was requested meanwhile
+    lbImg.src = im.src; lbImg.alt = p.title;
+    requestAnimationFrame(()=>lbImg.classList.add("ok"));
+  };
+  im.src = big(p.file);
+  $("lbTitle").textContent = p.title;
+  $("lbSeries").textContent = p.series;
+  $("lbNum").textContent = `${pad(at+1)} / ${pad(flat.length)}`;
+  preload(at+1); preload(at-1);
+}
+function openLB(i){
+  lastFocus = document.activeElement; show(i);
+  lb.classList.add("open"); lb.setAttribute("aria-hidden","false");
+  document.body.style.overflow = "hidden"; cur.classList.remove("on");
+  $("lbClose").focus({preventScroll:true});
+}
+function closeLB(){
+  lb.classList.remove("open"); lb.setAttribute("aria-hidden","true");
+  document.body.style.overflow = ""; lastFocus?.focus({preventScroll:true});
+}
+$("lbClose").onclick = closeLB;
+$("lbPrev").onclick = ()=>show(at-1);
+$("lbNext").onclick = ()=>show(at+1);
+// ---- film player ----------------------------------------------------------
+const vb = $("vb"), vbVideo = $("vbVideo");
+let filmFocus = null;
+function openFilm(file,title,dur){
+  filmFocus = document.activeElement;
+  document.querySelectorAll("video.loop").forEach(v=>v.pause());
+  $("vbTitle").textContent = title; $("vbMeta").textContent = `( ${dur} )`;
+  vbVideo.poster = `video/${file}.webp`; vbVideo.src = `video/${file}.mp4`;
+  vb.classList.add("open"); vb.setAttribute("aria-hidden","false");
+  document.body.style.overflow = "hidden"; cur.classList.remove("on");
+  vbVideo.play().catch(()=>{});
+  $("vbClose").focus({preventScroll:true});
+}
+function closeFilm(){
+  vbVideo.pause(); vbVideo.removeAttribute("src"); vbVideo.load();
+  vb.classList.remove("open"); vb.setAttribute("aria-hidden","true");
+  document.body.style.overflow = ""; filmFocus?.focus({preventScroll:true});
+  if (!quiet) rearmLoops();
+}
+$("vbClose").onclick = closeFilm;
+addEventListener("keydown",e=>{ if (e.key==="Escape" && vb.classList.contains("open")) closeFilm(); });
+
+addEventListener("keydown",e=>{
+  if (!lb.classList.contains("open")) return;
+  if (e.key==="Escape") closeLB();
+  if (e.key==="ArrowRight") show(at+1);
+  if (e.key==="ArrowLeft") show(at-1);
+});
+// swipe on phones
+let sx = null;
+$("lbStage").addEventListener("touchstart",e=>{ sx = e.touches[0].clientX; },{passive:true});
+$("lbStage").addEventListener("touchend",e=>{
+  if (sx===null) return; const dx = e.changedTouches[0].clientX - sx; sx = null;
+  if (Math.abs(dx) > 40) show(at + (dx<0 ? 1 : -1));
+});
+</script>
+</body>
+</html>

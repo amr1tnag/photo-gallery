@@ -1,0 +1,5 @@
+# source JPGs are only used to generate the WebP sizes the site serves
+img/*.jpg
+.claude
+tools
+README.md
