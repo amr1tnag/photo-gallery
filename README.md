@@ -17,7 +17,7 @@ img/NN-*.webp       640 / 1200 / 1800px versions the site serves (generated)
 img/meta.js         photo sizes + blurred placeholders (generated)
 video/*.mp4         full edits (1080p) and 6-second silent loops
 video/*.webp        film covers
-og.jpg              link-preview image (LinkedIn, WhatsApp, X)
+og-hero.jpg         link-preview image (LinkedIn, WhatsApp, X)
 tools/make_sizes.py regenerates the webp files and meta.js
 ```
 
