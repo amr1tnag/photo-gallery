@@ -37,8 +37,14 @@ Then open http://localhost:5173.
 
 ## Deploy
 
+The repo is connected to Vercel, so every push to `main` updates the live site automatically:
+
 ```
-vercel deploy --prod
+git add -A
+git commit -m "describe the change"
+git push
 ```
+
+Other branches get their own preview link without touching the live site. You can still deploy by hand with `vercel deploy --prod`.
 
 `.vercelignore` keeps the source JPGs and the tools folder out of the upload.
